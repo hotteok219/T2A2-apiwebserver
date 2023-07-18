@@ -1,4 +1,4 @@
-from main import db
+from init import db, ma
 
 class Trainer(db.Model):
     __tablename__ = 'trainers'
@@ -8,10 +8,17 @@ class Trainer(db.Model):
     last_name = db.Column(db.String(), nullable=False)
     dob = db.Column(db.Date(), nullable=False)
     phone = db.Column(db.String(), nullable=False)
-    email = db.Column(db.String(), nullable=False)
+    email = db.Column(db.String(), nullable=False, unique=True)
     password = db.Column(db.String(), nullable=False)
     emergency_contact_name = db.Column(db.String(), nullable=False)
     emergency_contact_phone = db.Column(db.String(), nullable=False)
     first_aid_officer = db.Column(db.Boolean(), nullable=False)
     active_staff = db.Column(db.Boolean(), nullable=False, default=True)
     classlogs = db.relationship('Classlog', back_populates='trainer_id', cascade='all, delete')
+
+class TrainerSchema(ma.Schema):
+    class Meta:
+        fields = ( 'id', 'first_name', 'last_name', 'dob', 'phone', 'email', 'password', 'emergency_contact_name ', 'emergency_contact_phone', 'first_aid_officer', 'active_staff')
+
+trainer_schema = TrainerSchema(exclude=['password'])
+trainers_schema = TrainerSchema(many=True, exclude=['password'])

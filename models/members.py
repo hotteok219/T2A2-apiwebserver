@@ -1,4 +1,4 @@
-from main import db
+from init import db, ma
 
 class Member(db.Model):
     __tablename__ = 'members'
