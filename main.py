@@ -2,6 +2,7 @@ from flask import Flask
 import os
 from init import db, ma, bcrypt, jwt
 from controllers.cli_controller import db_commands
+from controllers.trainer_controller import trainer_bp
 
 # create database object
 # db = SQLAlchemy()
@@ -23,5 +24,6 @@ def create_app():
     jwt.init_app(app)
 
     app.register_blueprint(db_commands)
+    app.register_blueprint(trainer_bp)
     
     return app

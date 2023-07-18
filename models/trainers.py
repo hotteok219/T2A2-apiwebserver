@@ -13,8 +13,8 @@ class Trainer(db.Model):
     password = db.Column(db.String(), nullable=False)
     emergency_contact_name = db.Column(db.String(), nullable=False)
     emergency_contact_phone = db.Column(db.String(), nullable=False)
-    first_aid_officer = db.Column(db.Boolean(), nullable=False)
-    active_staff = db.Column(db.Boolean(), nullable=False, default=True)
+    first_aid_officer = db.Column(db.Boolean(), default=False)
+    active_staff = db.Column(db.Boolean(), default=True)
     # classlogs = db.relationship('Classlog', back_populates='trainer_id', cascade='all, delete')
 
 class TrainerSchema(ma.Schema):
