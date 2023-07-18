@@ -3,14 +3,14 @@ import os
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # get the secret key
-    JWT_SECRET_KEY = os.environ.get("SECRET_KEY")
+    JWT_SECRET_KEY = os.environ.get('SECRET_KEY')
     # get the database url
     @property
     def SQLALCHEMY_DATABASE_URI(self):
-        value = os.environ.get("DATABASE_URL")
+        value = os.environ.get('DATABASE_URL')
 
         if not value:
-            raise ValueError("DATABASE_URL is not set.")
+            raise ValueError('DATABASE_URL is not set.')
 
         return value
     
@@ -23,11 +23,11 @@ class ProductionConfig(Config):
 class TestingConfig(Config):
     TESTING = True
 
-environment = os.environ.get("FLASK_ENV")
+environment = os.environ.get('FLASK_ENV')
 
-if environment == "production":
+if environment == 'production':
     app_config = ProductionConfig()
-elif environment == "testing":
+elif environment == 'testing':
     app_config = TestingConfig()
 else:
     app_config = DevelopmentConfig()
