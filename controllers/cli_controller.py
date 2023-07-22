@@ -74,7 +74,7 @@ def seed_db():
             dob = '1961-12-28',
             phone = '0483597267',
             email = 'MollyBryant@email.com',
-            password = bcrypt.generate_password_hash('user1pw').decode('utf-8'),
+            password = bcrypt.generate_password_hash('user2pw').decode('utf-8'),
             emergency_contact_name = 'Elijah Burley',
             emergency_contact_phone = '0461642376'
         )

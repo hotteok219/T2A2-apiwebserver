@@ -3,6 +3,7 @@ import os
 from init import db, ma, bcrypt, jwt
 from controllers.cli_controller import db_commands
 from controllers.trainer_controller import trainer_bp
+from controllers.member_controller import member_bp
 
 # create database object
 # db = SQLAlchemy()
@@ -25,5 +26,6 @@ def create_app():
 
     app.register_blueprint(db_commands)
     app.register_blueprint(trainer_bp)
+    app.register_blueprint(member_bp)
     
     return app

@@ -4,56 +4,8 @@ from datetime import timedelta
 from init import db, bcrypt
 from models.trainers import Trainer, trainer_schema, trainers_schema, trainerpw_schema
 
+
 trainer_bp = Blueprint('trainer', __name__, url_prefix='/trainer')
-
-# Register a trainer - auth required
-@trainer_bp.route('/register', methods=['POST'])
-@jwt_required()
-def trainer_register():
-    # Obtain data from user input
-    body_data = request.get_json()
-
-    # Create a new instance of the Trainer model
-    trainer = Trainer()
-    trainer.first_name = body_data.get('first_name')
-    trainer.last_name = body_data.get('last_name')
-    trainer.dob = body_data.get('dob')
-    trainer.phone = body_data.get('phone')
-    trainer.email =  body_data.get('email')
-    if body_data.get('password'):
-        trainer.password =  bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
-    trainer.emergency_contact_name =  body_data.get('emergency_contact_name')
-    trainer.emergency_contact_phone = body_data.get('emergency_contact_phone')
-    trainer.first_aid_officer = body_data.get('first_aid_officer')
-
-    # Add trainer to session
-    db.session.add(trainer)
-    # Commit trainer to session
-    db.session.commit()
-    # Respond to the user
-    return trainer_schema.dump(trainer), 201
-
-
-
-# Login as a member
-@trainer_bp.route('/login', methods=['POST'])
-def trainer_login():
-    # Obtain data from user input
-    body_data = request.get_json()
-
-    # Find the trainer using email address
-    stmt = db.select(Trainer).filter_by(email=body_data.get('email'))
-    trainer = db.session.scalar(stmt)
-
-    # Check if trainer exists, if yes, check password is correct
-    if trainer and bcrypt.check_password_hash(trainer.password, body_data.get('password')):
-        # Set an expiry on the token
-        token = create_access_token(identity=str(trainer.id), expires_delta=timedelta(days=1))
-        return {'email': trainer.email, 'token': token}
-    # If trainer doesn't exist, return error
-    else:
-        return {'error': 'Invalid email or password.'}, 401
-
 
 
 # Show list of trainers - no auth required
@@ -83,7 +35,57 @@ def trainer_id(id):
 
 
 
-# Delete a trainer - auth required
+# Register a trainer - auth required: trainers only
+@trainer_bp.route('/register', methods=['POST'])
+@jwt_required()
+def trainer_register():
+    # Obtain data from user input
+    body_data = request.get_json()
+
+    # Create a new instance of the Trainer model
+    trainer = Trainer()
+    trainer.first_name = body_data.get('first_name')
+    trainer.last_name = body_data.get('last_name')
+    trainer.dob = body_data.get('dob')
+    trainer.phone = body_data.get('phone')
+    trainer.email =  body_data.get('email')
+    if body_data.get('password'):
+        trainer.password =  bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
+    trainer.emergency_contact_name =  body_data.get('emergency_contact_name')
+    trainer.emergency_contact_phone = body_data.get('emergency_contact_phone')
+    trainer.first_aid_officer = body_data.get('first_aid_officer')
+
+    # Add trainer to session
+    db.session.add(trainer)
+    # Commit trainer to session
+    db.session.commit()
+    # Respond to the user
+    return trainer_schema.dump(trainer), 201
+
+
+
+# Login as a trainer
+@trainer_bp.route('/login', methods=['POST'])
+def trainer_login():
+    # Obtain data from user input
+    body_data = request.get_json()
+
+    # Find the trainer using email address
+    stmt = db.select(Trainer).filter_by(email=body_data.get('email'))
+    trainer = db.session.scalar(stmt)
+
+    # Check if trainer exists, if yes, check password is correct
+    if trainer and bcrypt.check_password_hash(trainer.password, body_data.get('password')):
+        # Set an expiry on the token
+        token = create_access_token(identity=str(trainer.id), expires_delta=timedelta(days=1))
+        return {'email': trainer.email, 'token': token}
+    # If trainer doesn't exist, return error
+    else:
+        return {'error': 'Invalid email or password.'}, 401
+
+
+
+# Delete a trainer - auth required: trainers only
 @trainer_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def trainer_delete(id):
