@@ -20,3 +20,4 @@ class MemberSchema(ma.Schema):
 
 member_schema = MemberSchema(exclude=['password'])
 members_schema = MemberSchema(many=True, exclude=['password'])
+memberpw_schema = MemberSchema()

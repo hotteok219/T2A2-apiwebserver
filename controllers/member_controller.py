@@ -3,7 +3,7 @@ from flask_jwt_extended import get_jwt_identity, create_access_token, jwt_requir
 from datetime import timedelta
 import functools
 from init import db, bcrypt
-from models.members import Member, member_schema, members_schema
+from models.members import Member, member_schema, members_schema, memberpw_schema
 from models.trainers import Trainer
 
 
@@ -129,5 +129,28 @@ def member_delete(id):
 # Update a member - auth required: trainers or a member can only update their own record
 @member_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
+@authorise_as_trainer
 def member_update(id):
-    pass
+    # Obtain data from user input - using memberpw_schema to enable password updates
+    body_data = memberpw_schema.load(request.get_json(), partial=True)
+
+    # Look for member with id
+    stmt = db.select(Member).filter_by(id=id)
+    member = db.session.scalar(stmt)
+
+    # If member exists, update member
+    if member:
+        member.first_name = body_data.get('first_name') or member.first_name
+        member.last_name = body_data.get('last_name') or member.last_name
+        member.dob = body_data.get('dob') or member.dob
+        member.phone = body_data.get('phone') or member.phone
+        member.email =  body_data.get('email') or member.email
+        member.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8') or member.password
+        member.emergency_contact_name =  body_data.get('emergency_contact_name') or member.emergency_contact_name
+        member.emergency_contact_phone = body_data.get('emergency_contact_phone') or member.emergency_contact_phone
+
+        db.session.commit()
+        # Respond to client without showing the password
+        return member_schema.dump(member)
+    else:
+        return {'error': f'Member with id {id} does not exist.'}, 404
