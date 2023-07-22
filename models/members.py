@@ -12,7 +12,6 @@ class Member(db.Model):
     password = db.Column(db.String(), nullable=False)
     emergency_contact_name = db.Column(db.String(), nullable=False)
     emergency_contact_phone = db.Column(db.String(), nullable=False)
-    active_member = db.Column(db.Boolean(), default=True)
     # classlogs = db.relationship('Classlog', back_populates='member_id', cascade='all, delete')
     
 class MemberSchema(ma.Schema):
