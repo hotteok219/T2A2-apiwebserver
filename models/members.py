@@ -16,7 +16,7 @@ class Member(db.Model):
     
 class MemberSchema(ma.Schema):
     class Meta:
-        fields = ( 'id', 'first_name', 'last_name', 'dob', 'phone', 'email', 'password', 'emergency_contact_name ', 'emergency_contact_phone', 'active_member')
+        fields = ( 'id', 'first_name', 'last_name', 'dob', 'phone', 'email', 'password', 'emergency_contact_name ', 'emergency_contact_phone')
 
 member_schema = MemberSchema(exclude=['password'])
 members_schema = MemberSchema(many=True, exclude=['password'])
