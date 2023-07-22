@@ -20,7 +20,8 @@ class TrainerSchema(ma.Schema):
 #     classlogs = fields.List(fields.Nested('ClasslogSchema', exlcude=['user_id']))
 
     class Meta:
-        fields = ( 'id', 'first_name', 'last_name', 'dob', 'phone', 'email', 'password', 'emergency_contact_name ', 'emergency_contact_phone', 'first_aid_officer', 'active_staff')
+        fields = ( 'id', 'first_name', 'last_name', 'dob', 'phone', 'email', 'password', 'emergency_contact_name ', 'emergency_contact_phone', 'first_aid_officer')
 
 trainer_schema = TrainerSchema(exclude=['password'])
 trainers_schema = TrainerSchema(many=True, exclude=['password'])
+trainerpw_schema = TrainerSchema()

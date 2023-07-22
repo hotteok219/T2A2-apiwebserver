@@ -28,8 +28,7 @@ def seed_db():
             password = bcrypt.generate_password_hash('admin123').decode('utf-8'),
             emergency_contact_name = 'Caitlin Swain',
             emergency_contact_phone = '0453698752',
-            first_aid_officer = True,
-            active_staff = True
+            first_aid_officer = True
         ),
         Trainer(
             first_name = 'Eve',
@@ -40,8 +39,7 @@ def seed_db():
             password = bcrypt.generate_password_hash('trainer2pw').decode('utf-8'),
             emergency_contact_name = 'Aaron Bradfield',
             emergency_contact_phone = '0447636546',
-            first_aid_officer = True,
-            active_staff = True
+            first_aid_officer = True
         ),
         Trainer(
             first_name = 'Indiana',
@@ -52,8 +50,7 @@ def seed_db():
             password = bcrypt.generate_password_hash('trainer3pw').decode('utf-8'),
             emergency_contact_name = 'Annabelle McMaster',
             emergency_contact_phone = '0440216072',
-            first_aid_officer = False,
-            active_staff = True
+            first_aid_officer = False
         )
     ]
     # Add trainers to the session
@@ -69,8 +66,7 @@ def seed_db():
             email = 'IslaClibborn@email.com',
             password = bcrypt.generate_password_hash('user1pw').decode('utf-8'),
             emergency_contact_name = 'Liam Lovely',
-            emergency_contact_phone = '0490634820',
-            active_member = True
+            emergency_contact_phone = '0490634820'
         ),
         Member(
             first_name = 'Molly',
@@ -80,8 +76,7 @@ def seed_db():
             email = 'MollyBryant@email.com',
             password = bcrypt.generate_password_hash('user1pw').decode('utf-8'),
             emergency_contact_name = 'Elijah Burley',
-            emergency_contact_phone = '0461642376',
-            active_member = True
+            emergency_contact_phone = '0461642376'
         )
     ]
     # Add members to the session
