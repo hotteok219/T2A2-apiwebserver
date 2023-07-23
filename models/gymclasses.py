@@ -1,7 +1,7 @@
 from init import db, ma
 
-class Class(db.Model):
-    __tablename__ = 'classes'
+class GymClass(db.Model):
+    __tablename__ = 'gymclasses'
 
     id = db.Column(db.Integer, primary_key=True)
     class_name = db.Column(db.String(), nullable=False)
@@ -9,11 +9,11 @@ class Class(db.Model):
     day = db.Column(db.String())
     time = db.Column(db.String())
     max_cap = db.Column(db.Integer())
-    classlogs = db.relationship('Classlog', back_populates='class_id', cascade='all, delete')
+    # classlogs = db.relationship('Classlog', back_populates='class_id', cascade='all, delete')
 
-class ClassSchema(db.Schema):
+class GymClassSchema(db.Schema):
     class Meta:
         fields = ('id', 'class_name', 'duration', 'day', 'time', 'max_cap')
 
-class_schema = ClassSchema()
-classes_schema = ClassSchema(many=True)
+gymclass_schema = GymClassSchema()
+gymclasses_schema = GymClassSchema(many=True)
