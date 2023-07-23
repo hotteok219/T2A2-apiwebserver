@@ -24,7 +24,7 @@ def trainer_list():
 @trainer_bp.route('/<int:id>')
 @jwt_required()
 @authorise_as_trainer
-def trainer_id(id):
+def trainer_list_one(id):
     # Look for trainer with id
     stmt = db.select(Trainer).filter_by(id=id)
     trainer = db.session.scalar(stmt)

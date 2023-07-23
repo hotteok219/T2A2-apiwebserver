@@ -2,6 +2,8 @@ from flask import Blueprint
 from init import db, bcrypt
 from models.trainers import Trainer
 from models.members import Member
+from models.gymclasses import GymClass
+from models.classlogs import Classlog
 
 
 db_commands = Blueprint('db', __name__)
@@ -85,6 +87,62 @@ def seed_db():
     ]
     # Add members to the session
     db.session.add_all(members)
+
+    # Create our classes
+    gymclasses = [
+        GymClass (
+            class_name = 'Pilates',
+            duration = '60 mins',
+            day = 'Monday',
+            time = '6:00pm',
+            max_cap = '12',
+            trainer = trainers[2]
+        ),
+        GymClass (
+            class_name = 'Boxing',
+            duration = '45 mins',
+            day = 'Wednesday',
+            time = '5:45pm',
+            max_cap = '10',
+            trainer = trainers[1]
+        ),
+        GymClass (
+            class_name = 'Zumba',
+            duration = '60 mins',
+            day = 'Friday',
+            time = '7:00pm',
+            max_cap = '12',
+            trainer = trainers[2]
+        )
+    ]
+    # Add gym classes to the session
+    db.session.add_all(gymclasses)
+
+    # Create classlog
+    classlogs = [
+        Classlog (
+            date = '2023-07-03',
+            gymclass_id = '1',
+            member_id = '1',
+            trainer_id = '2'
+        ),
+        Classlog (
+            date = '2023-07-03',
+            gymclass_id = '1',
+            member_id = '2',
+            trainer_id = '2'
+        ),
+        Classlog (
+            date = '2023-07-05',
+            gymclass_id = '2',
+            member_id = '1',
+            trainer_id = '2'
+        )
+    ]
+    # Add class logs to the session
+    db.session.add_all(classlogs)
+
+    # Commit all
     db.session.commit()
 
     print('Tables seeded')

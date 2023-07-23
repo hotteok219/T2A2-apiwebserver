@@ -22,7 +22,7 @@ def member_list():
 # Show specific member - auth required: trainers or a member can only view their own record
 @member_bp.route('/<int:id>')
 @jwt_required()
-def member_id(id):
+def member_list_one(id):
     # Look for member with id
     stmt = db.select(Member).filter_by(id=id)
     member = db.session.scalar(stmt)
