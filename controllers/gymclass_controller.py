@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from init import db
-from models.gymclasses import GymClass, gymclass_schema, gymclasses_schema
+from models.gymclasses import GymClass
+from schemas.gymclass_schema import gymclass_schema, gymclasses_schema
 from decorators.auth_decorator import authorise_as_trainer
 
 
@@ -32,7 +33,7 @@ def gymclass_list_one(id):
 @authorise_as_trainer
 def gymclass_register():
     # Obtain data from user input
-    body_data = request.get_json()
+    body_data = gymclass_schema.load(request.get_json())
 
     # Create a new instance of the GymClass model
     gymclass = GymClass()

@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from init import db, bcrypt
-from models.members import Member, member_schema, members_schema, memberpw_schema
+from models.members import Member
+from schemas.member_schema import member_schema, members_schema, memberpw_schema
 from decorators.auth_decorator import authorise_as_trainer
 
 
@@ -81,7 +82,9 @@ def member_update(id):
             member.dob = body_data.get('dob') or member.dob
             member.phone = body_data.get('phone') or member.phone
             member.email =  body_data.get('email') or member.email
-            member.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8') or member.password
+            # Check if there is user input for a password update
+            if body_data.get('password'):
+                member.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
             member.emergency_contact_name =  body_data.get('emergency_contact_name') or member.emergency_contact_name
             member.emergency_contact_phone = body_data.get('emergency_contact_phone') or member.emergency_contact_phone
 

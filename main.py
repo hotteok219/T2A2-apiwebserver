@@ -1,4 +1,5 @@
 from flask import Flask
+from marshmallow.exceptions import ValidationError
 import os
 from init import db, ma, bcrypt, jwt
 from controllers.cli_controller import db_commands
@@ -17,6 +18,10 @@ def create_app():
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
     app.config["JWT_SECRET_KEY"] = os.environ.get("SECRET_KEY")
+
+    @app.errorhandler(ValidationError)
+    def validation_error(err):
+        return {'error': err.messages}, 400
 
     # initialise
     db.init_app(app)

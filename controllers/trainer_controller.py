@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from init import db, bcrypt
-from models.trainers import Trainer, trainer_schema, trainers_schema, trainerpw_schema
+from models.trainers import Trainer
+from schemas.trainer_schema import trainer_schema, trainers_schema, trainerpw_schema
 from decorators.auth_decorator import authorise_as_trainer
 
 
@@ -74,7 +75,9 @@ def trainer_update(id):
         trainer.dob = body_data.get('dob') or trainer.dob
         trainer.phone = body_data.get('phone') or trainer.phone
         trainer.email =  body_data.get('email') or trainer.email
-        trainer.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8') or trainer.password
+        # Check if there is user input for a password update
+        if body_data.get('password'):
+            trainer.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
         trainer.emergency_contact_name =  body_data.get('emergency_contact_name') or trainer.emergency_contact_name
         trainer.emergency_contact_phone = body_data.get('emergency_contact_phone') or trainer.emergency_contact_phone
         trainer.first_aid_officer = body_data.get('first_aid_officer') or trainer.first_aid_officer

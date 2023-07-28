@@ -1,4 +1,5 @@
-from init import db, ma
+from init import db
+
 
 class Classlog(db.Model):
     __tablename__ = 'classlogs'
@@ -12,11 +13,3 @@ class Classlog(db.Model):
     gymclasses = db.relationship('GymClass', back_populates='classlog')
     member = db.relationship('Member', back_populates='classlog')
     trainer = db.relationship('Trainer', back_populates='classlog')
-
-class ClasslogSchema(ma.Schema):
-    class Meta:
-        fields = ('id', 'date', 'gymclass_id', 'trainer_id', 'member_id')
-        ordered = True
-
-classlog_schema = ClasslogSchema()
-classlogs_schema = ClasslogSchema(many=True)

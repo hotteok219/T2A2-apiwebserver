@@ -1,5 +1,5 @@
-from marshmallow import fields
-from init import db, ma
+from init import db
+
 
 class GymClass(db.Model):
     __tablename__ = 'gymclasses'
@@ -14,13 +14,3 @@ class GymClass(db.Model):
 
     trainer = db.relationship('Trainer', back_populates='gymclasses')
     classlog = db.relationship('Classlog', back_populates='gymclasses')
-
-class GymClassSchema(ma.Schema):
-    trainer = fields.Nested('TrainerSchema', only=['first_name', 'last_name'])
-
-    class Meta:
-        fields = ('id', 'class_name', 'duration', 'day', 'time', 'max_cap', 'trainer_id', 'trainer')
-        ordered = True
-
-gymclass_schema = GymClassSchema()
-gymclasses_schema = GymClassSchema(many=True)

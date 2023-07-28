@@ -4,8 +4,10 @@ from datetime import timedelta
 from init import db, bcrypt
 from controllers.trainer_controller import trainer_bp
 from controllers.member_controller import member_bp
-from models.trainers import Trainer, trainer_schema, trainers_schema
-from models.members import Member, member_schema, members_schema
+from models.trainers import Trainer
+from schemas.trainer_schema import trainer_schema, trainers_schema
+from models.members import Member
+from schemas.member_schema import member_schema, members_schema
 from decorators.auth_decorator import authorise_as_trainer
 
 
@@ -26,7 +28,7 @@ def trainer_register():
     trainer.last_name = body_data.get('last_name')
     trainer.dob = body_data.get('dob')
     trainer.phone = body_data.get('phone')
-    trainer.email =  body_data.get('email')
+    trainer.email =  body_data.get('email').lower()
     if body_data.get('password'):
         trainer.password =  bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
     trainer.emergency_contact_name =  body_data.get('emergency_contact_name')
@@ -48,7 +50,7 @@ def trainer_login():
     body_data = request.get_json()
 
     # Find the trainer using email address
-    stmt = db.select(Trainer).filter_by(email=body_data.get('email'))
+    stmt = db.select(Trainer).filter_by(email=body_data.get('email').lower())
     trainer = db.session.scalar(stmt)
 
     # Check if trainer exists, if yes, check password is correct
@@ -75,7 +77,7 @@ def member_register():
     member.last_name = body_data.get('last_name')
     member.dob = body_data.get('dob')
     member.phone = body_data.get('phone')
-    member.email =  body_data.get('email')
+    member.email =  body_data.get('email').lower()
     if body_data.get('password'):
         member.password =  bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
     member.emergency_contact_name =  body_data.get('emergency_contact_name')
@@ -96,7 +98,7 @@ def member_login():
     body_data = request.get_json()
 
     # Find the member using email address
-    stmt = db.select(Member).filter_by(email=body_data.get('email'))
+    stmt = db.select(Member).filter_by(email=body_data.get('email').lower())
     member = db.session.scalar(stmt)
 
     # Check if member exists, if yes, check password is correct

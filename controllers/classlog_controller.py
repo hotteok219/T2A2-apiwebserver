@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from init import db
-from models.classlogs import Classlog, classlog_schema, classlogs_schema
+from models.classlogs import Classlog
+from schemas.classlog_schema import classlog_schema, classlogs_schema
 from decorators.auth_decorator import authorise_as_trainer
 
 
