@@ -1,5 +1,8 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import IntegrityError
+from psycopg2 import errorcodes
+from datetime import datetime
 from init import db
 from models.gymclasses import GymClass
 from schemas.gymclass_schema import gymclass_schema, gymclasses_schema
@@ -32,24 +35,30 @@ def gymclass_list_one(id):
 @jwt_required()
 @authorise_as_trainer
 def gymclass_register():
-    # Obtain data from user input
-    body_data = gymclass_schema.load(request.get_json())
+    try:
+        # Obtain data from user input
+        body_data = gymclass_schema.load(request.get_json())
 
-    # Create a new instance of the GymClass model
-    gymclass = GymClass()
-    gymclass.class_name = body_data.get('class_name')
-    gymclass.duration = body_data.get('duration')
-    gymclass.day = body_data.get('day')
-    gymclass.time = body_data.get('time')
-    gymclass.max_cap = body_data.get('max_cap')
-    gymclass.trainer_id = body_data.get('trainer_id')
+        # Create a new instance of the GymClass model
+        gymclass = GymClass()
+        gymclass.class_name = body_data.get('class_name')
+        gymclass.duration = body_data.get('duration')
+        gymclass.day = body_data.get('day')
+        gymclass.time = body_data.get('time')
+        gymclass.max_cap = body_data.get('max_cap')
+        gymclass.trainer_id = body_data.get('trainer_id')
 
-    # Add gymclass to session
-    db.session.add(gymclass)
-    # Commit gymclass to session
-    db.session.commit()
-    # Respond to the user
-    return gymclass_schema.dump(gymclass), 201
+        # Add gymclass to session
+        db.session.add(gymclass)
+        # Commit gymclass to session
+        db.session.commit()
+        # Respond to the user
+        return gymclass_schema.dump(gymclass), 201
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {'error': 'A gym class exists with overlapping details. Ensure trainers are not being double booked.'}, 409
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {'error': f'The {err.orig.diag.column_name} is required'}, 409
 
 
 # Delete a class - auth required: trainers only
@@ -75,24 +84,30 @@ def gymclass_delete(id):
 @jwt_required()
 @authorise_as_trainer
 def gymclass_update(id):
-    # Obtain data from user input
-    body_data = gymclass_schema.load(request.get_json(), partial=True)
-    
-    # Look for gymclass with id
-    stmt = db.select(GymClass).filter_by(id=id)
-    gymclass = db.session.scalar(stmt)
+    try:
+        # Obtain data from user input
+        body_data = gymclass_schema.load(request.get_json(), partial=True)
+        
+        # Look for gymclass with id
+        stmt = db.select(GymClass).filter_by(id=id)
+        gymclass = db.session.scalar(stmt)
 
-    # If gymclass exists, update gymclass
-    if gymclass:
-        gymclass.class_name = body_data.get('class_name') or gymclass.class_name
-        gymclass.duration = body_data.get('duration') or gymclass.duration
-        gymclass.day = body_data.get('day') or gymclass.day
-        gymclass.time = body_data.get('time') or gymclass.time
-        gymclass.max_cap = body_data.get('max_cap') or gymclass.max_cap
-        gymclass.trainer_id = body_data.get('trainer_id') or gymclass.trainer_id
+        # If gymclass exists, update gymclass
+        if gymclass:
+            gymclass.class_name = body_data.get('class_name') or gymclass.class_name
+            gymclass.duration = body_data.get('duration') or gymclass.duration
+            gymclass.day = body_data.get('day') or gymclass.day
+            gymclass.time = body_data.get('time') or gymclass.time
+            gymclass.max_cap = body_data.get('max_cap') or gymclass.max_cap
+            gymclass.trainer_id = body_data.get('trainer_id') or gymclass.trainer_id
 
-        db.session.commit()
-        # Respond to user
-        return gymclass_schema.dump(gymclass)
-    else:
-        return {'error': f'Gym class with id {id} does not exist.'}, 404
+            db.session.commit()
+            # Respond to user
+            return gymclass_schema.dump(gymclass)
+        else:
+            return {'error': f'Gym class with id {id} does not exist.'}, 404
+    except IntegrityError as err:
+        if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
+            return {'error': 'A gym class exists with overlapping details. Ensure trainers are not being double booked.'}, 409
+        if err.orig.pgcode == errorcodes.NOT_NULL_VIOLATION:
+            return {'error': f'The {err.orig.diag.column_name} is required'}, 409

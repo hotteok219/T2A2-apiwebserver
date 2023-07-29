@@ -13,3 +13,9 @@ class GymClass(db.Model):
 
     trainer = db.relationship('Trainer', back_populates='gymclasses')
     classlog = db.relationship('Classlog', back_populates='gymclasses')
+    
+    # Creating unique constraints to prevent duplication
+    __table_args__ = (
+        db.UniqueConstraint('class_name', 'day', 'time'),
+        db.UniqueConstraint('trainer_id', 'day', 'time'),
+    )
