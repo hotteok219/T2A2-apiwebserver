@@ -49,10 +49,10 @@ def classlog_add():
         user_gymclassid = body_data.get('gymclass_id')    
         user_trainerid = body_data.get('trainer_id') 
         
-        # Check if gym class ID exists, if not return an error
+        # Check if gym class id exists, if not return an error
         gymclass = GymClass.query.get(user_gymclassid)
         if not gymclass:
-            return {'error': f'Gym class with ID {user_gymclassid} does not exist.'}, 404
+            return {'error': f'Gym class with id {user_gymclassid} does not exist.'}, 404
         
         # Check for class capacity
         if gymclass.max_cap:
@@ -62,7 +62,7 @@ def classlog_add():
                 time=user_time
             ).count()
             if current_cap >= gymclass.max_cap:
-                return {'error': f'Gym class with ID {user_gymclassid} on {user_date} at {user_time} is full. Please try a different class.'}, 400
+                return {'error': f'Gym class with id {user_gymclassid} on {user_date} at {user_time} is full. Please try a different class.'}, 400
             
         # Check if a trainer has a conflicting class on the same date and time
         if Classlog.query.filter(
@@ -71,7 +71,7 @@ def classlog_add():
             Classlog.date==user_date,
             Classlog.time==user_time
         ).first():
-            return {'error': f'Trainer with ID {user_trainerid} is already teaching another class on {user_date} at {user_time}.'}, 400
+            return {'error': f'Trainer with id {user_trainerid} is already teaching another class on {user_date} at {user_time}.'}, 400
 
         # Create a new instance of the Classlog model
         classlog = Classlog()
@@ -108,9 +108,9 @@ def classlog_delete(id):
     if classlog:
         db.session.delete(classlog)
         db.session.commit()
-        return {'message': f'Classlog entry with ID {id} removed successfully.'}
+        return {'message': f'Classlog entry with id {id} removed successfully.'}
     else:
-        return {'error': f'Classlog entry with ID {id} does not exist.'}, 404
+        return {'error': f'Classlog entry with id {id} does not exist.'}, 404
 
 
 # Update an entry to class log - auth required: trainers only
@@ -137,7 +137,7 @@ def classlog_update(id):
             # Check if GymClass exists, if not return an error
             gymclass = GymClass.query.get(classlog.gymclass_id)
             if not gymclass:
-                return {'error': f'Gym class with ID {classlog.gymclass_id} does not exist.'}, 404
+                return {'error': f'Gym class with id {classlog.gymclass_id} does not exist.'}, 404
         
             # Check for class capacity
             if gymclass.max_cap:
@@ -147,7 +147,7 @@ def classlog_update(id):
                     time=user_time
                 ).count()
                 if current_cap >= gymclass.max_cap:
-                    return {'error': f'Gym class with {user_gymclassid} ID on {user_date} at {user_time} is full. Please try a different class.'}, 400
+                    return {'error': f'Gym class with id {user_gymclassid} on {user_date} at {user_time} is full. Please try a different class.'}, 400
             
             # Check if a trainer has a conflicting class on the same date and time
             if Classlog.query.filter(
@@ -156,7 +156,7 @@ def classlog_update(id):
                 Classlog.date==user_date,
                 Classlog.time==user_time
             ).first():
-                return {'error': f'Trainer with ID {user_trainerid} is already teaching another class on {user_date} at {user_time}.'}, 400
+                return {'error': f'Trainer with id {user_trainerid} is already teaching another class on {user_date} at {user_time}.'}, 400
 
             classlog.date = body_data.get('date') or classlog.date
             classlog.time = body_data.get('time') or classlog.time
@@ -169,7 +169,7 @@ def classlog_update(id):
             # Respond to user
             return classlog_schema.dump(classlog)
         else:
-            return {'error': f'Classlog entry with ID {id} does not exist.'}, 404
+            return {'error': f'Classlog entry with id {id} does not exist.'}, 404
     except IntegrityError as err:
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
             return {'error': 'A classlog exists with overlapping details. Ensure trainers and members aren\'t double booking.'}, 409
